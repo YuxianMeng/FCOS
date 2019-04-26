@@ -103,7 +103,15 @@ class DatasetCatalog(object):
         "cityscapes_fine_instanceonly_seg_test_cocostyle": {
             "img_dir": "cityscapes/images",
             "ann_file": "cityscapes/annotations/instancesonly_filtered_gtFine_test.json"
-        }
+        },
+        "stamp_train": {
+            "data_dir": "/data/nfsdata/data/yuxian/datasets/stamps_voc_clean",
+            "split": "train"
+        },
+        "stamp_test": {
+            "data_dir": "/data/nfsdata/data/yuxian/datasets/stamps_voc_clean",
+            "split": "test"
+        },
     }
 
     @staticmethod
@@ -128,6 +136,17 @@ class DatasetCatalog(object):
             )
             return dict(
                 factory="PascalVOCDataset",
+                args=args,
+            )
+        elif "stamp" in name:
+            data_dir = DatasetCatalog.DATA_DIR
+            attrs = DatasetCatalog.DATASETS[name]
+            args = dict(
+                data_dir=os.path.join(data_dir, attrs["data_dir"]),
+                split=attrs["split"],
+            )
+            return dict(
+                factory="StampDataset",
                 args=args,
             )
         raise RuntimeError("Dataset not available: {}".format(name))
